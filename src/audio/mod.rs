@@ -12,11 +12,7 @@ impl Plugin for GameAudioPlugin {
             .add_systems(Startup, systems::load_audio_assets)
             .add_systems(
                 Update,
-                (
-                    systems::start_bgm,
-                    systems::play_sfx,
-                )
-                    .run_if(in_state(AppState::InGame)),
+                systems::play_sfx.run_if(in_state(AppState::InGame)),
             );
     }
 }
@@ -40,9 +36,7 @@ pub struct PlaySfx {
 /// Holds all loaded audio asset handles.
 #[derive(Resource)]
 pub struct AudioAssets {
-    pub bgm_battle: Handle<bevy_kira_audio::AudioSource>,
     pub sword_swings: Vec<Handle<bevy_kira_audio::AudioSource>>,
     pub hits: Vec<Handle<bevy_kira_audio::AudioSource>>,
     pub footsteps: Vec<Handle<bevy_kira_audio::AudioSource>>,
-    pub bgm_started: bool,
 }

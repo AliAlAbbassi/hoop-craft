@@ -1,6 +1,8 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+use crate::audio_reactive::{ReactiveFloor, ReactiveNeon, ReactiveSpotlight};
+
 /// Spawn a nightclub environment.
 pub fn spawn_terrain(
     mut commands: Commands,
@@ -37,16 +39,18 @@ pub fn spawn_terrain(
             let emissive_color = tile_colors[color_idx];
             let r = emissive_color.to_srgba();
 
+            let base_emissive = bevy::color::LinearRgba::new(r.red * 2.0, r.green * 2.0, r.blue * 2.0, 1.0);
             commands.spawn((
                 Mesh3d(meshes.add(Cuboid::new(2.4, 0.02, 2.4))),
                 MeshMaterial3d(materials.add(StandardMaterial {
                     base_color: emissive_color.with_alpha(0.8),
-                    emissive: bevy::color::LinearRgba::new(r.red * 2.0, r.green * 2.0, r.blue * 2.0, 1.0),
+                    emissive: base_emissive,
                     metallic: 0.6,
                     perceptual_roughness: 0.2,
                     ..default()
                 })),
                 Transform::from_xyz(col as f32 * 2.6, 0.015, row as f32 * 2.6),
+                ReactiveFloor { base_emissive },
             ));
         }
     }
@@ -119,14 +123,16 @@ pub fn spawn_terrain(
 
     for (pos, size, color) in neon_configs {
         let c = color.to_srgba();
+        let base_emissive = bevy::color::LinearRgba::new(c.red * 8.0, c.green * 8.0, c.blue * 8.0, 1.0);
         commands.spawn((
             Mesh3d(meshes.add(Cuboid::new(size.x, size.y, size.z))),
             MeshMaterial3d(materials.add(StandardMaterial {
                 base_color: color,
-                emissive: bevy::color::LinearRgba::new(c.red * 8.0, c.green * 8.0, c.blue * 8.0, 1.0),
+                emissive: base_emissive,
                 ..default()
             })),
             Transform::from_translation(pos),
+            ReactiveNeon { base_emissive },
         ));
     }
 
@@ -337,6 +343,7 @@ pub fn spawn_terrain(
                 ..default()
             },
             Transform::from_xyz(pos.x, 7.5, pos.z),
+            ReactiveSpotlight { base_intensity: 50_000.0 },
         ));
 
         // Light ring at base
@@ -361,6 +368,7 @@ pub fn spawn_terrain(
             ..default()
         },
         Transform::from_xyz(0.0, 7.0, 0.0),
+        ReactiveSpotlight { base_intensity: 80_000.0 },
     ));
 
     // ── Raised platform / stage area ──

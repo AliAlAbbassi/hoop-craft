@@ -2,6 +2,7 @@
 
 mod app_state;
 mod audio;
+mod audio_reactive;
 mod camera;
 mod character;
 mod combat;
@@ -16,7 +17,7 @@ mod ui;
 mod world;
 
 use bevy::prelude::*;
-use bevy::window::WindowResolution;
+use bevy::window::{PresentMode, WindowResolution};
 use avian3d::prelude::*;
 use bevy_vrm1::prelude::*;
 use bevy_kira_audio::AudioPlugin;
@@ -30,6 +31,7 @@ fn main() {
             primary_window: Some(Window {
                 title: "Hoop Craft".to_string(),
                 resolution: WindowResolution::new(1280, 720),
+                present_mode: PresentMode::AutoVsync,
                 ..default()
             }),
             ..default()
@@ -57,6 +59,7 @@ fn main() {
             world::WorldPlugin,
             ui::UiPlugin,
             audio::GameAudioPlugin,
+            audio_reactive::AudioReactivePlugin,
         ))
         .run();
 }

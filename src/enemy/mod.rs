@@ -1,5 +1,6 @@
 pub mod ai;
 pub mod components;
+pub mod dance;
 pub mod spawner;
 
 use bevy::prelude::*;
@@ -16,6 +17,8 @@ impl Plugin for EnemyPlugin {
                 (
                     ai::enemy_ai,
                     ai::remove_dead_enemies,
+                    dance::init_dancers,
+                    dance::dance_system,
                 )
                     .run_if(in_state(AppState::InGame)),
             );
